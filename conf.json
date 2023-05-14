@@ -1,0 +1,27 @@
+{
+    "general": {
+        "train_test_ratio": 0.8,
+        "Chinese_stop_word":"./data/Chinese/chinese_stopword.txt",
+        "English_stop_word":""
+    },
+
+    "datasets": {
+        "SWSR": {
+            "file_name": "SWSR.csv",
+            "language": "Chinese",
+            "text_col_name": "comment_text",
+            "label_col_name": "label",
+            "true_label": null,
+            "root_path": "./data/Chinese/"
+        },
+        "CallMeSexist": {
+            "file_name": "call_me_sexist.csv",
+            "language": "English",
+            "text_col_name": "text",
+            "label_col_name": "sexist",
+            "true_label": true,
+            "root_path": "./data/English/CallMeSexist/"
+        }
+        
+    }
+}
