@@ -19,7 +19,7 @@
             "language": "English",
             "text_col_name": "text",
             "label_col_name": "sexist",
-            "true_label": true,
+            "true_label": [true],
             "root_path": "./data/English/CallMeSexist/"
         }
         
