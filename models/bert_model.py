@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # bert_model(df, language=language)
     # end_time = time.time()
     # execution_time = end_time - start_time
-    # print("time used: {:.2f}秒".format(execution_time))
+    # print("time used: {:.2f}s".format(execution_time))
 
     dataset = data['datasets']['CallMeSexist']
     root_path = dataset["root_path"]
@@ -145,4 +145,4 @@ if __name__ == "__main__":
     bert_model(df, language=language)
     end_time = time.time()
     execution_time = end_time - start_time
-    print("time used: {:.2f}秒".format(execution_time))
+    print("time used: {:.2f}s".format(execution_time))

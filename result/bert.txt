@@ -1,0 +1,19 @@
+bert-swsr:
+-------done------
+epoch: 1, loss: 0.4589612416426341
+epoch: 2, loss: 0.33257748540904786
+epoch: 3, loss: 0.21467621695664194
+epoch: 4, loss: 0.11650068115442991
+epoch: 5, loss: 0.060435951900564965
+Test Accuracy: 0.8043
+time uesd: 506.46s
+
+bert-callme:
+-------done------
+epoch: 1, loss: 0.21825939064020636
+epoch: 2, loss: 0.12338787933014049
+epoch: 3, loss: 0.07142597594082661
+epoch: 4, loss: 0.03978558087617683
+epoch: 5, loss: 0.024134385956931296
+Test Accuracy: 0.9421
+time used: 561.94s

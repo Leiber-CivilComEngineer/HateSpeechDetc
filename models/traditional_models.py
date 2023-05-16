@@ -91,47 +91,18 @@ def adaboost_model(x_train, y_train, x_test, y_test):
 
 
 if __name__ == "__main__":
-    import os
-    pwd = "/home/leiber/Codings/individual_pro/new/"
-    os.chdir(pwd)
-    import json
-    with open('conf.json') as f:
-        data = json.load(f)
-    dataset = data['datasets']['SWSR']
-    train_test_ratio = data['general']['train_test_ratio']
-    root_path = dataset["root_path"]
-    df = pd.read_csv(root_path+"clean.csv")
-    df = imbedding.word2vec_averaged_emb(df, vector_size=100, averaged=True)
-    df_train, df_test = util.split_df(df=df, train_ratio=0.8, develop_ratio=0, test_ratio=0.2, random_state=1)
-    x_train = df_train['emb']
-    y_train = df_train['label']
-    x_test = df_test['emb']
-    y_test = df_test['label']
-    x_train = np.array(x_train.values.tolist())
-    y_train = np.array(y_train.values.tolist())
-    x_test = np.array(x_test.values.tolist())
-    y_test = np.array(y_test.values.tolist())
-    svm_model(x_train, y_train, x_test, y_test)
-    decision_tree_model(x_train, y_train, x_test, y_test)
-    random_forest_model(x_train, y_train, x_test, y_test)
-    xgb_model(x_train, y_train, x_test, y_test)
-    lr_model(x_train, y_train, x_test, y_test)
-    gbdt_model(x_train, y_train, x_test, y_test)
-    naive_bayes_model(x_train, y_train, x_test, y_test)
-    adaboost_model(x_train, y_train, x_test, y_test)
-    
-    
     # import os
     # pwd = "/home/leiber/Codings/individual_pro/new/"
     # os.chdir(pwd)
     # import json
     # with open('conf.json') as f:
     #     data = json.load(f)
-    # dataset = data['datasets']['CallMeSexist']
+    # dataset = data['datasets']['SWSR']
     # train_test_ratio = data['general']['train_test_ratio']
     # root_path = dataset["root_path"]
     # df = pd.read_csv(root_path+"clean.csv")
-    # df = imbedding.word2vec_averaged_emb(df, vector_size=100, averaged=True)
+    # # df = imbedding.word2vec_averaged_emb(df, vector_size=100, averaged=True)
+    # df = imbedding.fasttext_emb(df, vector_size=100, averaged=True)
     # df_train, df_test = util.split_df(df=df, train_ratio=0.8, develop_ratio=0, test_ratio=0.2, random_state=1)
     # x_train = df_train['emb']
     # y_train = df_train['label']
@@ -149,3 +120,34 @@ if __name__ == "__main__":
     # gbdt_model(x_train, y_train, x_test, y_test)
     # naive_bayes_model(x_train, y_train, x_test, y_test)
     # adaboost_model(x_train, y_train, x_test, y_test)
+    
+    
+    import os
+    pwd = "/home/leiber/Codings/individual_pro/new/"
+    os.chdir(pwd)
+    import json
+    with open('conf.json') as f:
+        data = json.load(f)
+    dataset = data['datasets']['CallMeSexist']
+    train_test_ratio = data['general']['train_test_ratio']
+    root_path = dataset["root_path"]
+    df = pd.read_csv(root_path+"clean.csv")
+    # df = imbedding.word2vec_averaged_emb(df, vector_size=100, averaged=True)
+    df = imbedding.fasttext_emb(df, vector_size=100, averaged=True)
+    df_train, df_test = util.split_df(df=df, train_ratio=0.8, develop_ratio=0, test_ratio=0.2, random_state=1)
+    x_train = df_train['emb']
+    y_train = df_train['label']
+    x_test = df_test['emb']
+    y_test = df_test['label']
+    x_train = np.array(x_train.values.tolist())
+    y_train = np.array(y_train.values.tolist())
+    x_test = np.array(x_test.values.tolist())
+    y_test = np.array(y_test.values.tolist())
+    svm_model(x_train, y_train, x_test, y_test)
+    decision_tree_model(x_train, y_train, x_test, y_test)
+    random_forest_model(x_train, y_train, x_test, y_test)
+    xgb_model(x_train, y_train, x_test, y_test)
+    lr_model(x_train, y_train, x_test, y_test)
+    gbdt_model(x_train, y_train, x_test, y_test)
+    naive_bayes_model(x_train, y_train, x_test, y_test)
+    adaboost_model(x_train, y_train, x_test, y_test)

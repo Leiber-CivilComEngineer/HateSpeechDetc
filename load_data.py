@@ -128,19 +128,9 @@ if __name__ == "__main__":
     import json
     with open('conf.json') as f:
         data = json.load(f)
-    # dataset = data['datasets']['SWSR']
-    # stop_word_path = data['general']['Chinese_stop_word']
+    dataset = data['datasets']['SWSR']
+    stop_word_path = data['general']['Chinese_stop_word']
 
-    # root_path = dataset["root_path"]
-    # file_name = dataset["file_name"]
-    # language = dataset["language"]
-    # text_col_name = dataset["text_col_name"]
-    # label_col_name = dataset["label_col_name"]
-    # true_label = dataset["true_label"]
-    # df = load_original_csv(root_path, file_name, text_col_name, label_col_name, true_label=None)
-    # df = tokenize_remove_stopword(df, root_path, file_name, language, stop_word_path=stop_word_path)
-    dataset = data['datasets']['CallMeSexist']
-    stop_word_path = data['general']['English_stop_word']
     root_path = dataset["root_path"]
     file_name = dataset["file_name"]
     language = dataset["language"]
@@ -149,3 +139,16 @@ if __name__ == "__main__":
     true_label = dataset["true_label"]
     df = load_original_csv(root_path, file_name, text_col_name, label_col_name, true_label=None)
     df = tokenize_remove_stopword(df, root_path, file_name, language, stop_word_path=stop_word_path)
+
+
+    
+    # dataset = data['datasets']['CallMeSexist']
+    # stop_word_path = data['general']['English_stop_word']
+    # root_path = dataset["root_path"]
+    # file_name = dataset["file_name"]
+    # language = dataset["language"]
+    # text_col_name = dataset["text_col_name"]
+    # label_col_name = dataset["label_col_name"]
+    # true_label = dataset["true_label"]
+    # df = load_original_csv(root_path, file_name, text_col_name, label_col_name, true_label=None)
+    # df = tokenize_remove_stopword(df, root_path, file_name, language, stop_word_path=stop_word_path)
