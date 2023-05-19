@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 
 
 
-def bert_model(origin_df, language):
+def bert_model(origin_df, language, root_path):
 
     # 设置随机种子，以便结果可重现
     torch.manual_seed(42)
@@ -91,6 +91,8 @@ def bert_model(origin_df, language):
 
     num_correct = 0
     num_samples = 0
+    correct_predictions = []
+    wrong_predictions = []
 
     with torch.no_grad():
         for test_batch in test_dataloader:
@@ -103,6 +105,27 @@ def bert_model(origin_df, language):
             _, predicted_labels = test_logits.max(1)
             num_correct += (predicted_labels == test_labels).sum().item()
             num_samples += test_labels.size(0)
+
+            for i in range(len(predicted_labels)):
+                if predicted_labels[i] == test_labels[i]:
+                    correct_prediction = {
+                        'text': test_df.iloc[i]['text'],
+                        'true_label': test_df.iloc[i]['label'],
+                        'predict': "T"
+                    }
+                    correct_predictions.append(correct_prediction)
+                else:
+                    wrong_prediction = {
+                        'text': test_df.iloc[i]['text'],
+                        'true_label': test_df.iloc[i]['label'],
+                        'predict': "F"
+                    }
+                    wrong_predictions.append(wrong_prediction)
+
+    correct_df = pd.DataFrame(correct_predictions)
+    wrong_df = pd.DataFrame(wrong_predictions)
+    combined_df = pd.concat([correct_df, wrong_df], ignore_index=True)
+    combined_df.to_csv(root_path+'predicted/combined.csv', index=True)
 
     accuracy = num_correct / num_samples
     print("-------done------")
@@ -119,30 +142,30 @@ if __name__ == "__main__":
     with open('conf.json') as f:
         data = json.load(f)
 
-    # dataset = data['datasets']['SWSR']
-    # root_path = dataset["root_path"]
-    # file_name = dataset["file_name"]
-    # language = dataset["language"]
-    # text_col_name = dataset["text_col_name"]
-    # label_col_name = dataset["label_col_name"]
-    # true_label = dataset["true_label"]
-    # df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name)
-    # start_time = time.time()
-    # bert_model(df, language=language)
-    # end_time = time.time()
-    # execution_time = end_time - start_time
-    # print("time used: {:.2f}s".format(execution_time))
-
-    dataset = data['datasets']['CallMeSexist']
+    dataset = data['datasets']['SWSR']
     root_path = dataset["root_path"]
     file_name = dataset["file_name"]
     language = dataset["language"]
     text_col_name = dataset["text_col_name"]
     label_col_name = dataset["label_col_name"]
     true_label = dataset["true_label"]
-    df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name, true_label=true_label)
+    df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name)
     start_time = time.time()
-    bert_model(df, language=language)
+    bert_model(df, language=language, root_path=root_path)
     end_time = time.time()
     execution_time = end_time - start_time
     print("time used: {:.2f}s".format(execution_time))
+
+    # dataset = data['datasets']['CallMeSexist']
+    # root_path = dataset["root_path"]
+    # file_name = dataset["file_name"]
+    # language = dataset["language"]
+    # text_col_name = dataset["text_col_name"]
+    # label_col_name = dataset["label_col_name"]
+    # true_label = dataset["true_label"]
+    # df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name, true_label=true_label)
+    # start_time = time.time()
+    # bert_model(df, language=language, root_path=root_path)
+    # end_time = time.time()
+    # execution_time = end_time - start_time
+    # print("time used: {:.2f}s".format(execution_time))

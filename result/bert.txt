@@ -1,4 +1,4 @@
-bert-swsr:
+bert-swsr: claimed
 -------done------
 epoch: 1, loss: 0.4589612416426341
 epoch: 2, loss: 0.33257748540904786
