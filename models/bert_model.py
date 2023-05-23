@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 
 
 
-def bert_model(origin_df, language, root_path):
+def bert_model(origin_df, language, root_path, alias):
 
     # 设置随机种子，以便结果可重现
     torch.manual_seed(42)
@@ -110,15 +110,17 @@ def bert_model(origin_df, language, root_path):
                 if predicted_labels[i] == test_labels[i]:
                     correct_prediction = {
                         'text': test_df.iloc[i]['text'],
+                        'source': alias,
                         'true_label': test_df.iloc[i]['label'],
-                        'predict': "T"
+                        'predict': test_df.iloc[i]['label']
                     }
                     correct_predictions.append(correct_prediction)
                 else:
                     wrong_prediction = {
                         'text': test_df.iloc[i]['text'],
+                        'source': alias,
                         'true_label': test_df.iloc[i]['label'],
-                        'predict': "F"
+                        'predict': 1-test_df.iloc[i]['label']
                     }
                     wrong_predictions.append(wrong_prediction)
 
@@ -142,30 +144,32 @@ if __name__ == "__main__":
     with open('conf.json') as f:
         data = json.load(f)
 
-    dataset = data['datasets']['SWSR']
-    root_path = dataset["root_path"]
-    file_name = dataset["file_name"]
-    language = dataset["language"]
-    text_col_name = dataset["text_col_name"]
-    label_col_name = dataset["label_col_name"]
-    true_label = dataset["true_label"]
-    df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name)
-    start_time = time.time()
-    bert_model(df, language=language, root_path=root_path)
-    end_time = time.time()
-    execution_time = end_time - start_time
-    print("time used: {:.2f}s".format(execution_time))
-
-    # dataset = data['datasets']['CallMeSexist']
+    # dataset = data['datasets']['SWSR']
+    # alias = dataset["alias"]
     # root_path = dataset["root_path"]
     # file_name = dataset["file_name"]
     # language = dataset["language"]
     # text_col_name = dataset["text_col_name"]
     # label_col_name = dataset["label_col_name"]
     # true_label = dataset["true_label"]
-    # df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name, true_label=true_label)
+    # df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name)
     # start_time = time.time()
-    # bert_model(df, language=language, root_path=root_path)
+    # bert_model(df, language=language, root_path=root_path, alias=alias)
     # end_time = time.time()
     # execution_time = end_time - start_time
     # print("time used: {:.2f}s".format(execution_time))
+
+    dataset = data['datasets']['CallMeSexist']
+    alias = dataset["alias"]
+    root_path = dataset["root_path"]
+    file_name = dataset["file_name"]
+    language = dataset["language"]
+    text_col_name = dataset["text_col_name"]
+    label_col_name = dataset["label_col_name"]
+    true_label = dataset["true_label"]
+    df = load_data.load_original_csv(root_path=root_path,file_name=file_name,text_col_name=text_col_name,label_col_name=label_col_name, true_label=true_label)
+    start_time = time.time()
+    bert_model(df, language=language, root_path=root_path, alias=alias)
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print("time used: {:.2f}s".format(execution_time))

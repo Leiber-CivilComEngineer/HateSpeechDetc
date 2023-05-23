@@ -7,6 +7,7 @@
 
     "datasets": {
         "SWSR": {
+            "alias": "SWSR",
             "file_name": "SWSR.csv",
             "language": "Chinese",
             "text_col_name": "comment_text",
@@ -15,6 +16,7 @@
             "root_path": "./data/Chinese/"
         },
         "CallMeSexist": {
+            "alias": "CallMe",
             "file_name": "call_me_sexist.csv",
             "language": "English",
             "text_col_name": "text",

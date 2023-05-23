@@ -2,3 +2,5 @@ __pycache__/
 test0000.py
 tools/
 data/English/Hateful Symbols/
+analysis/sentence_bert_emb.py
+data/sentence_emb/test.py
