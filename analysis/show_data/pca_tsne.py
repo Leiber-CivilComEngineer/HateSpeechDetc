@@ -17,6 +17,7 @@ import ast
 emb_path = "./data/sentence_emb/Eng_Chi_sentence_emb.csv"
 df = pd.read_csv(emb_path)
 
+
 df['embedding'] = df['embedding'].apply(ast.literal_eval)
 
 features = np.array(df["embedding"].tolist())
@@ -33,16 +34,19 @@ df["pca2"] = pca_result[:, 1]
 df["tsne1"] = tsne_result[:, 0]
 df["tsne2"] = tsne_result[:, 1]
 
-# 根据真实标签和预测标签分割数据
+# # 根据真实标签和预测标签分割数据
 correct_ENG = df[(df["true_label"] == df["predict"]) & (df["source"] == "CallMe")]
 incorrect_ENG = df[(df["true_label"] != df["predict"]) & (df["source"] == "CallMe")]
 correct_CNH = df[(df["true_label"] == df["predict"]) & (df["source"] == "SWSR")]
 incorrect_CNH = df[(df["true_label"] != df["predict"]) & (df["source"] == "SWSR")]
 
-# 将明显的类提前保存
-ENG_clusters = [()]
+# only consider positive
+# correct_ENG = df[(df["true_label"] == 1) & (df["predict"] == 1) & (df["source"] == "CallMe")] 
+# incorrect_ENG = df[(df["true_label"] == 1) & (df["predict"] == 0) & (df["source"] == "CallMe")]
+# correct_CNH = df[(df["true_label"] == 1) & (df["predict"] == 1) & (df["source"] == "SWSR")] 
+# incorrect_CNH = df[(df["true_label"] == 1) & (df["predict"] == 0) & (df["source"] == "SWSR")]
 
-# 绘制四类数据的分布情况
+# # 绘制四类数据的分布情况
 plt.figure(figsize=(20, 16))
 plt.scatter(correct_ENG["pca1"], correct_ENG["pca2"], c="cyan", label="correct_ENG")
 plt.scatter(incorrect_ENG["pca1"], incorrect_ENG["pca2"], c="blue", label="incorrect_ENG")
@@ -67,41 +71,26 @@ plt.ylabel("t-SNE Dimension 2")
 plt.show()
 
 
+# 分析模块
 
+# positive_ENG = df[(df["true_label"] == 1) & (df["source"] == "CallMe")]
+# positive_ENG.to_csv("temp.csv")
+# positive_CHN = df[(df["true_label"] == 1) & (df["source"] == "SWSR")]
 
+# combined_df = pd.DataFrame(columns=["text", "group", "predict"])
 
+# for i, c in enumerate(ENG_clusters):
+#     cluster_df = positive_ENG[(positive_ENG["tsne1"] >= c[0]) & (positive_ENG["tsne1"] <= c[1]) & (positive_ENG["tsne2"] >= c[2]) & (positive_ENG["tsne2"] <= c[3])]
+#     print(cluster_df)
+#     exit()
+#     cluster_df["group"] = i
+#     cluster_df = cluster_df[["text", "group", "predict"]]
+#     combined_df = pd.concat([combined_df, cluster_df], ignore_index=True)
 
+# for i, c in enumerate(CHN_clusters):
+#     cluster_df = positive_CHN[(positive_CHN["tsne1"] >= c[0]) & (positive_CHN["tsne1"] <= c[1]) & (positive_CHN["tsne2"] >= c[2]) & (positive_CHN["tsne2"] <= c[3])]
+#     cluster_df["group"] = i
+#     cluster_df = cluster_df[["text", "group", "predict"]]
+#     combined_df = pd.concat([combined_df, cluster_df], ignore_index=True)
 
-
-
-
-
-
-
-
-
-# embeddings = np.array(df['embedding'].tolist())
-# true_labels = np.array(df['true_label'])
-# predicted_labels = np.array(df['predict'])
-
-
-# # print()
-# # exit()
-
-# # 使用PCA进行降维
-# pca = PCA(n_components=2)
-# reduced_embeddings = pca.fit_transform(embeddings)
-
-# # 使用t-SNE进行降维
-# tsne = TSNE(n_components=2, perplexity=30, random_state=42)
-# reduced_embeddings = tsne.fit_transform(embeddings)
-
-# plt.figure(figsize=(10, 8))
-# colors = ['red', 'blue', 'green', 'purple']  # 根据标签选择颜色
-
-# for i in range(reduced_embeddings.shape[0]):
-#     plt.scatter(reduced_embeddings[i, 0], reduced_embeddings[i, 1], color=colors[true_labels[i]], label='True Label')
-#     plt.scatter(reduced_embeddings[i, 0], reduced_embeddings[i, 1], color=colors[predicted_labels[i]], marker='x', label='Predicted Label')
-
-# plt.legend()
-# plt.show()
+# combined_df.to_csv("./result/positive_grouped.csv")

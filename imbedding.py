@@ -21,14 +21,31 @@ np.set_printoptions(threshold=np.inf)
 #     X = vectorizer.fit_transform(df_col)
 #     return X, vectorizer
 
-def tfidf_emb(df):
+# def tfidf_emb(df):
+#     vectorizer = TfidfVectorizer()
+#     documents = df['text'].values
+#     tfidf_matrix = vectorizer.fit(documents)
+#     df["emb"] = pd.DataFrame(tfidf_matrix)
+#     return df
+
+def tfidf_emb(df, vector_size=100):
     vectorizer = TfidfVectorizer()
     documents = df['text'].values
-    tfidf_matrix = vectorizer.fit(documents)
-    df["emb"] = pd.DataFrame(tfidf_matrix)
+    tfidf_matrix = vectorizer.fit_transform(documents)
+    
+    X_embedded = []
+    for i in range(len(documents)):
+        doc_embedding = tfidf_matrix[i].toarray().flatten()
+        if len(doc_embedding) < vector_size:
+            doc_embedding = np.pad(doc_embedding, (0, vector_size - len(doc_embedding)), 'constant')
+        else:
+            doc_embedding = doc_embedding[:vector_size]
+        X_embedded.append(doc_embedding)
+    
+    df['emb'] = X_embedded
     return df
 
-def word2vec_averaged_emb(df, vector_size=100, averaged=True):
+def word2vec_averaged_emb(df, vector_size=100, averaged=True, max_token=30):
     documents = [doc.split() for doc in df["text"]]
     model = Word2Vec(documents, vector_size=vector_size, window=5, min_count=5, workers=4)
     X_embedded = []
@@ -42,12 +59,19 @@ def word2vec_averaged_emb(df, vector_size=100, averaged=True):
                 doc_embedding = sum(doc_embedding) / len(doc_embedding)
             else:
                 doc_embedding = [0] * vector_size
+        else:
+            doc_len = len(doc_embedding)
+            if doc_len > max_token:
+                doc_embedding = doc_embedding[:max_token]
+            else:
+                for i in range(max_token-doc_len):
+                    doc_embedding.append([0]*vector_size)
         X_embedded.append(doc_embedding)
     df['emb'] = X_embedded
     return df
 
 
-def fasttext_emb(df, vector_size=100, averaged=True):
+def fasttext_emb(df, vector_size=100, averaged=True, max_token=30):
     documents = [doc.split() for doc in df["text"]]
     model = FastText(documents, vector_size=vector_size, window=5, min_count=5, workers=4)
     X_embedded = []
@@ -61,36 +85,16 @@ def fasttext_emb(df, vector_size=100, averaged=True):
                 doc_embedding = sum(doc_embedding) / len(doc_embedding)
             else:
                 doc_embedding = [0] * vector_size
+        else:
+            doc_len = len(doc_embedding)
+            if doc_len > max_token:
+                doc_embedding = doc_embedding[:max_token]
+            else:
+                for i in range(max_token-doc_len):
+                    doc_embedding.append([0]*vector_size)
         X_embedded.append(doc_embedding)
     df['emb'] = X_embedded
     return df
-    
-def bert_emb(df):
-    #not function
-    model_name = 'bert-base-chinese'
-    tokenizer = BertTokenizer.from_pretrained(model_name)
-    model = BertModel.from_pretrained(model_name)
-    embeddings = []
-    for document in df['text']:
-        # 使用tokenizer将文档分词并添加特殊标记
-        tokens = tokenizer.tokenize(document)
-        tokens = ['[CLS]'] + tokens + ['[SEP]']
-        
-        # 将分词转换为词汇索引
-        input_ids = tokenizer.convert_tokens_to_ids(tokens)
-        
-        # 将词汇索引转换为PyTorch张量
-        input_ids = torch.tensor(input_ids).unsqueeze(0)  # 添加批处理维度
-        
-        # 计算BERT模型的词嵌入
-        with torch.no_grad():
-            outputs = model(input_ids)
-            # 获取最后一层的隐藏状态作为词嵌入
-            embeddings.append(outputs[0][:, 0, :].squeeze().tolist())  # 取CLS的隐藏状态作为整个文档的表示
-
-    # 将词嵌入添加到DataFrame中
-    embeddings_df = pd.DataFrame(embeddings)
-    return embeddings_df
 
 
 if __name__ == "__main__":

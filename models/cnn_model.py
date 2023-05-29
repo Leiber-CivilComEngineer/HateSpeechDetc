@@ -15,6 +15,8 @@ from keras.models import Sequential
 from keras.layers import Embedding, Conv1D, GlobalMaxPooling1D, Dense, Dropout, Flatten
 from keras.optimizers import Adam
 from keras_preprocessing.sequence import pad_sequences
+from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import confusion_matrix
 
 
 def cnn_model(train_df, develop_df, test_df):
@@ -55,6 +57,26 @@ def cnn_model(train_df, develop_df, test_df):
     # 在测试集上评估模型
     test_loss, test_accuracy = model.evaluate(test_embeddings, test_labels, verbose=0)
     print(f"Test Loss: {test_loss}, Test Accuracy: {test_accuracy}")
+
+    # 预测测试集的标签
+    test_predictions = model.predict(test_embeddings)
+    test_predictions = np.round(test_predictions).flatten()
+
+    # 计算精确度、召回率和 F1 分数
+    precision = precision_score(test_labels, test_predictions)
+    recall = recall_score(test_labels, test_predictions)
+    f1 = f1_score(test_labels, test_predictions)
+
+    print('Precision:', precision)
+    print('Recall:', recall)
+    print('F1-score:', f1)
+
+    confusion_mat = confusion_matrix(test_labels, test_predictions)
+
+    # 打印混淆矩阵
+    print("Confusion Matrix:")
+    print(confusion_mat)
+
     return model
 
 
@@ -65,13 +87,13 @@ if __name__ == "__main__":
     import json
     with open('conf.json') as f:
         data = json.load(f)
-    dataset = data['datasets']['SWSR']
+
+    # dataset = data['datasets']['SWSR']
+    dataset = data['datasets']['CallMeSexist']
     train_test_ratio = data['general']['train_test_ratio']
     root_path = dataset["root_path"]
-    root_path = "./data/Chinese/"
     df = pd.read_csv(root_path+"clean.csv")
-    df = imbedding.fasttext_emb(df, vector_size=100, averaged=False)
     # df = imbedding.word2vec_averaged_emb(df, vector_size=100, averaged=False)
-    # print(type(df['emb']))
+    df = imbedding.fasttext_emb(df, vector_size=100, averaged=False)
     train_df, develop_df, test_df= util.split_df(df=df, train_ratio=0.6, develop_ratio=0.2, test_ratio=0.2, random_state=5)
     cnn_model(train_df, develop_df, test_df)

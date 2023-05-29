@@ -3,6 +3,12 @@
 
 import pandas as pd
 from bertopic import BERTopic
+import random
+import numpy as np
+
+random.seed(42)
+np.random.seed(42)
+
 
 df = pd.read_csv("./data/sentence_emb/Eng_Chi_sentence_emb.csv")
 df = df[df["source"] == "SWSR"]
@@ -11,17 +17,19 @@ des_path = "./result/topic_analysis/SWSR_topic.csv"
 # df = df[df["source"] == "CallMe"]
 # des_path = "./result/topic_analysis/CallMe_topic.csv"
 
-topic_model = BERTopic(language="multilingual", top_n_words=5, calculate_probabilities=False, verbose=True)
+topic_model = BERTopic(language="multilingual", top_n_words=20, calculate_probabilities=False, verbose=True)
 
 embeddings = df['text'].tolist()
 topics, _ = topic_model.fit_transform(embeddings)
 df['topic'] = topics
 unique_topics = df['topic'].unique()
 
-result_df = pd.DataFrame(columns=['topic', 'correct_num', 'wrong_num', 'tp', 'tn', 'fp', 'fn', "accuracy", 'keywords'])
+result_df = pd.DataFrame(columns=['topic', 'text', 'correct_num', 'wrong_num', 'tp', 'tn', 'fp', 'fn', "accuracy", 'keywords'])
+text_df = pd.DataFrame(columns=['topic', 'text', 'true_label', 'predict'])
 
 for topic in unique_topics:
     topic_df = df[df['topic'] == topic]  # 获取属于当前主题的数据子集
+    text_df = pd.concat([text_df, topic_df[['topic', 'text', 'true_label', 'predict']]])
     total_samples = topic_df.shape[0]
 
     tp = topic_df[(topic_df['true_label'] == 1) & (topic_df['predict'] == 1)].shape[0]  # 统计正确样本数量
@@ -43,6 +51,11 @@ for topic in unique_topics:
         'accuracy': (tp+tn)/total_samples,
         'keywords': topic_keywords
     }, ignore_index=True)
+
+# text_path = "./result/topic_analysis/CallMe_text.csv"
+text_path = "./result/topic_analysis/SWSR_text.csv"
+text_df = text_df.sort_values(by='topic', ascending=True)
+text_df.to_csv(text_path)
 
 result_df = result_df.sort_values(by='accuracy', ascending=False)
 result_df.to_csv(des_path, index=False)
