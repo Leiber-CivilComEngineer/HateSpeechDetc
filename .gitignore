@@ -4,3 +4,4 @@ tools/
 data/English/Hateful Symbols/
 analysis/sentence_bert_emb.py
 data/sentence_emb/test.py
+saved_bert_model/
